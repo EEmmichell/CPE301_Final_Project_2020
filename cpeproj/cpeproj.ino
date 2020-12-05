@@ -32,8 +32,8 @@ void setup() {
 void loop() {
 
   waterLevel = analogRead(Spin); //reading the pin into the variable
-  Serial.println(waterLevel); //printing the water level
-  delay(1000);
+  Serial.println(waterLevel); //printing the water level to console
+  delay(1000); 
   
   // water level readings, air temp and humidity
   
