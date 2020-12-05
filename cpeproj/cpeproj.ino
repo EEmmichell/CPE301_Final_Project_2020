@@ -32,7 +32,7 @@ int dht11 = 7; //dht temperature and humidifier pin 7
 
 void setup() {
 
-  lcd.begin(16, 2);
+  lcd.begin(16, 2); //setup the LCD display
   
   Serial.begin(9600); //setup normal delay
 
