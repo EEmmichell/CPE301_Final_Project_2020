@@ -1,5 +1,7 @@
 //#include <avr/io.h>
 //#include <Arduino.h>
+#include <dht.h>
+#include <LiquidCrystal.h>
 
 /* 
  1) Monitor the water levels in a reservoir and print an alert when the level is too low
@@ -24,8 +26,15 @@
 int waterLevel = 0; //water level initialization
 int Spin = A5; //water level sensor pin
 
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // setting up LCD display
+dht DHT; //setting up the LCD
+int dht11 = 7; //dht temperature and humidifier pin 7 
+
 void setup() {
-  Serial.begin(9600);
+
+  lcd.begin(16, 2);
+  
+  Serial.begin(9600); //setup normal delay
 
 }
 
@@ -33,9 +42,20 @@ void loop() {
 
   waterLevel = analogRead(Spin); //reading the pin into the variable
   Serial.println(waterLevel); //printing the water level to console
-  delay(1000); 
   //make an alert when its low go to LCD display
-  
-  // water level readings, air temp and humidity
+
+  /* Temperature and Humidity Setup */
+  int chk = DHT.read11(dht11);
+  lcd.setCursor(0,0); 
+  lcd.print("Temp: ");
+  lcd.print(DHT.temperature);
+  lcd.print((char)223);
+  lcd.print("C");
+  lcd.setCursor(0,1);
+  lcd.print("Humidity: ");
+  lcd.print(DHT.humidity);
+  lcd.print("%");
+
+  delay(1000);  //setup normal day
   
 }
