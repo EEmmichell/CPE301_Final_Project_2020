@@ -1,3 +1,6 @@
+//#include <avr/io.h>
+//#include <Arduino.h>
+
 /* 
  1) Monitor the water levels in a reservoir and print an alert when the level is too low
     - use water level detection sensor module
@@ -11,19 +14,20 @@
     - use push button 
  6) Record the time and date every time the motor is turned on or off. This information should 
      be transmitted to a host computer (over USB)
+     - user timer exmples in avr-source code??
 
  extra:
+    - https://github.com/klancaster-unr/avr-source
     - at some point an analog signal needs to be converted to digital
 */
 
 
-
 void setup() {
-  
+  Serial.begin(9600);
 
 }
 
 void loop() {
+  // water level readings, air temp and humidity
   
-
 }
