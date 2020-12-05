@@ -21,7 +21,8 @@
     - at some point an analog signal needs to be converted to digital
 */
 
-
+int waterLevel = 0; //water level initialization
+int Spin = A5; //water level sensor pin
 
 void setup() {
   Serial.begin(9600);
@@ -29,6 +30,10 @@ void setup() {
 }
 
 void loop() {
+
+  waterLevel = analogRead(Spin);
+  Serial.println(waterLevel);
+  
   // water level readings, air temp and humidity
   
 }
