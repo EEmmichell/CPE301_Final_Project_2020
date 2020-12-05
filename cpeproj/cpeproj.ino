@@ -34,6 +34,7 @@ void loop() {
   waterLevel = analogRead(Spin); //reading the pin into the variable
   Serial.println(waterLevel); //printing the water level to console
   delay(1000); 
+  //make an alert when its low go to LCD display
   
   // water level readings, air temp and humidity
   
