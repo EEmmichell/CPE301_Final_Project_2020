@@ -52,7 +52,7 @@ void setup() {
 
   pinMode(buttonPin, INPUT);                                        //LED setup
   pinMode(ledPinYellow,OUTPUT);
-  pinMode(ledPingGreen,OUTPUT);
+  pinMode(ledPinGreen,OUTPUT);
   pinMode(ledPinRed,OUTPUT);
   pinMode(ledPinBlue,OUTPUT);
   
@@ -67,7 +67,7 @@ void loop() {
   waterLevel = analogRead(Spin);                                    //reading the pin into the variable
   Serial.println(waterLevel);                                       //printing the water level to console
 
-  if(waterlevel < 80)                                               //80 is arbitrary, will find better value after testing
+  if(waterLevel < 80)                                               //80 is arbitrary, will find better value after testing
   {
     lcd.println("THE WATER LEVEL IS LOW");
   }
@@ -102,14 +102,14 @@ void loop() {
     digitalWrite(ledPinYellow, HIGH);
     digitalWrite(ledPinRed, LOW);
     digitalWrite(ledPinBlue, LOW);
-    digitalWrite(ledPinGreen, LOW)
+    digitalWrite(ledPinGreen, LOW);
   }
   else                                        //IDLE
   {
     digitalWrite(ledPinGreen, HIGH);
     digitalWrite(ledPinRed, LOW);
     digitalWrite(ledPinBlue, LOW);
-    digitalWrite(ledPinYellow, LOW)
+    digitalWrite(ledPinYellow, LOW);
   }
    
   
