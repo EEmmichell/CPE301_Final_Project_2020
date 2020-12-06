@@ -14,6 +14,7 @@
     - 
  5) Allow as user to enable or disable the system using an on/off button
     - use push button 
+    - Yellow/Disabled , Green/Idle , Red/Error, Blue/Running
  6) Record the time and date every time the motor is turned on or off. This information should 
      be transmitted to a host computer (over USB)
      - user timer exmples in avr-source code??
