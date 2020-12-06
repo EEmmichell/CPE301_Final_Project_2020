@@ -31,9 +31,13 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // setting up LCD display
 dht DHT; //setting up the LCD
 int dht11 = 7; //dht temperature and humidifier pin 7 
 
+int motor = 3; //pwm analog pins
+
 void setup() {
 
   lcd.begin(16, 2); //setup the LCD display
+
+  pinMode(motor, OUTPUT);
   
   Serial.begin(9600); //setup normal delay
 
@@ -57,6 +61,8 @@ void loop() {
   lcd.print(DHT.humidity);
   lcd.print("%");
 
-  delay(1000);  //setup normal day
+  analogWrite(motor, 0); //0 is the motor not moving, change up to 255 to switch the speed
+
+  delay(1000);  //setup normal delay
   
 }
