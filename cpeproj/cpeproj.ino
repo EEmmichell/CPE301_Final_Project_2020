@@ -62,7 +62,19 @@ void loop() {
   lcd.print("%");
 
   analogWrite(motor, 0); //0 is the motor not moving, change up to 255 to switch the speed
-
+  
+  // Motor threshold test code mock up
+  if(DHT.tempterature > 20) //when the temperature is above 68 degress fahrenheit, motor will pick up speed
+  {
+    analogWrite(motor, 200);
+  }
+  else                      //else it wil idle around 1007
+  {
+    analogWrite(motor, 100);
+  }
+   
+  
+  
   delay(1000);  //setup normal delay
   
 }
