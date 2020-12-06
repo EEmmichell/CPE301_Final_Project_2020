@@ -21,33 +21,56 @@
 
  extra:
     - https://github.com/klancaster-unr/avr-source
-    - at some point an analog signal needs to be converted to digital
+    - at some point an analog signal needs to be converted to digital (MAYBE)
+    -https://www.youtube.com/watch?v=n7WRi5U5lQk&t=101s SETTING UP ARDUINO WATER SENSOR
+    - https://www.circuitbasics.com/how-to-set-up-the-dht11-humidity-sensor-on-an-arduino/ HUMIDITY SENSOR SETUP
+    -https://www.youtube.com/watch?v=G2WJvblxAGQ DC MOTOR SETUP
 */
 
-int waterLevel = 0; //water level initialization
-int Spin = A5; //water level sensor pin
+int waterLevel = 0;                                                 //water level initialization
+int Spin = A5;                                                      //water level sensor pin
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // setting up LCD display
-dht DHT; //setting up the LCD
-int dht11 = 7; //dht temperature and humidifier pin 7 
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);                              // setting up LCD display
+dht DHT;                                                            //setting up the LCD
+int dht11 = 7;                                                      //dht temperature and humidifier pin 7 
 
-int motor = 3; //pwm analog pins
+int motor = 3;                                                      //pwm analog pins
+
+const int buttonPin = 2;                                            //push button pin
+int buttonState = 0;                                        
+const int ledPinYellow = 12;                                        //LED Disabled
+const int ledPinGreen = 13;                                         //LED IDLE
+const int ledPinRed = 8;                                            //LED Error
+const int ledPinBlue = 7;                                           //LED Running
+
 
 void setup() {
 
-  lcd.begin(16, 2); //setup the LCD display
+  lcd.begin(16, 2);                                                 //setup the LCD display
 
-  pinMode(motor, OUTPUT);
+  pinMode(motor, OUTPUT);                                           //setup motor
+
+  pinMode(buttonPin, INPUT);                                        //LED setup
+  pinMode(ledPinYellow,OUTPUT);
+  pinMode(ledPingGreen,OUTPUT);
+  pinMode(ledPinRed,OUTPUT);
+  pinMode(ledPinBlue,OUTPUT);
   
-  Serial.begin(9600); //setup normal delay
+  Serial.begin(9600);                                               //setup normal delay
 
 }
 
 void loop() {
 
-  waterLevel = analogRead(Spin); //reading the pin into the variable
-  Serial.println(waterLevel); //printing the water level to console
-  //make an alert when its low go to LCD display
+  buttonState = digitalRead(buttonPin);                             //read push button for on and off
+
+  waterLevel = analogRead(Spin);                                    //reading the pin into the variable
+  Serial.println(waterLevel);                                       //printing the water level to console
+
+  if(waterlevel < 80)                                               //80 is arbitrary, will find better value after testing
+  {
+    lcd.println("THE WATER LEVEL IS LOW");
+  }
 
   /* Temperature and Humidity Setup */
   int chk = DHT.read11(dht11);
@@ -61,20 +84,36 @@ void loop() {
   lcd.print(DHT.humidity);
   lcd.print("%");
 
-  analogWrite(motor, 0); //0 is the motor not moving, change up to 255 to switch the speed
+  // analogWrite(motor, 0);                                         //0 is the motor not moving, change up to 255 to switch the speed
   
   // Motor threshold test code mock up
-  if(DHT.tempterature > 20) //when the temperature is above 68 degress fahrenheit, motor will pick up speed
+  if(DHT.tempterature > 20)                                         //when the temperature is above 68 degress fahrenheit, motor will pick up speed
   {
     analogWrite(motor, 200);
   }
-  else                      //else it wil idle around 1007
+  else                                                              //else it wil idle around 100
   {
     analogWrite(motor, 100);
+  }
+
+  /*CODE MIGHT NEED TO BE COMBINED FOR FUNCTIONALITY LATER*/
+  if(buttonState == LOW)                      //DISABLED
+  {
+    digitalWrite(ledPinYellow, HIGH);
+    digitalWrite(ledPinRed, LOW);
+    digitalWrite(ledPinBlue, LOW);
+    digitalWrite(ledPinGreen, LOW)
+  }
+  else                                        //IDLE
+  {
+    digitalWrite(ledPinGreen, HIGH);
+    digitalWrite(ledPinRed, LOW);
+    digitalWrite(ledPinBlue, LOW);
+    digitalWrite(ledPinYellow, LOW)
   }
    
   
   
-  delay(1000);  //setup normal delay
+  delay(1000);                                                      //setup normal delay
   
 }
