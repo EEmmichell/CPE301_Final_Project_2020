@@ -96,7 +96,7 @@ void loop() {
     analogWrite(motor, 100);
   }
 
-  /*CODE MIGHT NEED TO BE COMBINED FOR FUNCTIONALITY LATER*/
+  /*CODE MIGHT NEED TO BE COMBINED FOR FUNCTIONALITY LATER - STILL NEEDS WORK FOR IMPLEMENTATION*/
   if(buttonState == LOW)                      //DISABLED
   {
     digitalWrite(ledPinYellow, HIGH);
