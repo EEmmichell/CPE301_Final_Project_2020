@@ -94,7 +94,7 @@ void loop() {
 
   
   // Motor threshold test code mock up
-  if(DHT.tempterature > 20)                                         //when the temperature is above 68 degress fahrenheit, motor will pick up speed
+  if(DHT.temperature > 20)                                         //when the temperature is above 68 degress fahrenheit, motor will pick up speed
   {
     analogWrite(motor, 200);
   }
@@ -132,12 +132,12 @@ void loop() {
          lcd.print("IN THE ERROR STATE");
   }
 
-  if(DHT.tempterature < 8)                   //RUNNING
+  if(DHT.temperature < 8)                   //RUNNING
   {
      digitalWrite(ledPinBlue, HIGH);
      digitalWrite(ledPinYellow, LOW);
      digitalWrite(ledPinRed, LOW);
-     digitalWrite(ledPinGreen, LOW)
+     digitalWrite(ledPinGreen, LOW);
   }
  
   
