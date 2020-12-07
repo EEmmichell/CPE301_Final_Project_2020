@@ -119,18 +119,23 @@ void loop() {
     digitalWrite(ledPinYellow, LOW);
   }
   
-
-  do                                   //ERROR                     //not sure what the condition should be for error state
+  if(1==0)                                     //ERROR                //not sure what the condition should be for error state
   {
-    digitalWrite(ledPinRed, HIGH);
-    digitalWrite(ledPinYellow, LOW);
-    digitalWrite(ledPinBlue, LOW);
-    digitalWrite(ledPinGreen, LOW);
+     do                                       
+     {
+         digitalWrite(ledPinRed, HIGH);
+         digitalWrite(ledPinYellow, LOW);
+         digitalWrite(ledPinBlue, LOW);
+         digitalWrite(ledPinGreen, LOW);
 
-    analogWrite(motor, 0);                                         //0 is the motor not moving, change up to 255 to switch the speed
-
-    
-  }while(waterLevel < 40);
+         analogWrite(motor, 0);                                         //0 is the motor not moving, change up to 255 to switch the speed
+         
+         lcd.setCursor(0,1);
+         lcd.print("IN THE ERROR STATE");
+         
+    }while(waterLevel < 40);
+  }
+ 
    
   
   
