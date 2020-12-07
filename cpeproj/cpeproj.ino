@@ -119,10 +119,8 @@ void loop() {
     digitalWrite(ledPinYellow, LOW);
   }
   
-  if(1==0)                                     //ERROR                //not sure what the condition should be for error state
+  if(waterLevel < 40)                         //ERROR                //not sure what the condition should be for error state
   {
-     do                                       
-     {
          digitalWrite(ledPinRed, HIGH);
          digitalWrite(ledPinYellow, LOW);
          digitalWrite(ledPinBlue, LOW);
@@ -132,12 +130,16 @@ void loop() {
          
          lcd.setCursor(0,1);
          lcd.print("IN THE ERROR STATE");
-         
-    }while(waterLevel < 40);
+  }
+
+  if(DHT.tempterature < 8)                   //RUNNING
+  {
+     digitalWrite(ledPinBlue, HIGH);
+     digitalWrite(ledPinYellow, LOW);
+     digitalWrite(ledPinRed, LOW);
+     digitalWrite(ledPinGreen, LOW)
   }
  
-   
-  
   
   delay(1000);                                                      //setup normal delay
   
