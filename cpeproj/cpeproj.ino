@@ -76,10 +76,11 @@ void loop() {
 
   if(waterLevel < 80)                                               //80 is arbitrary, will find better value after testing
   {
+    lcd.setCursor(1,0);
     lcd.println("THE WATER LEVEL IS LOW");
   }
 
-  /* Temperature and Humidity Setup */
+  //Setup for the LCD display and Humidity/Temperature
   int chk = DHT.read11(dht11);
   lcd.setCursor(0,0); 
   lcd.print("Temp: ");
