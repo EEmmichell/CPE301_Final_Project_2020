@@ -27,9 +27,7 @@
     -https://www.youtube.com/watch?v=G2WJvblxAGQ DC MOTOR SETUP
 
   ---------------------TODO LIST--------------------------------------------------------------
-  - get dht.h header file to work , might need to just add it into the library
   - be able to adjust the output vent
-  - make sure the right leds turn on during each state
   - make a clock that tracks the time
 
 */
@@ -45,10 +43,10 @@ int motor = 3;                                                      //pwm analog
 
 const int buttonPin = 2;                                            //push button pin
 int buttonState = 0;                                        
-const int ledPinYellow = 12;                                        //LED Disabled
+const int ledPinYellow = 10;                                        //LED Disabled
 const int ledPinGreen = 13;                                         //LED IDLE
 const int ledPinRed = 8;                                            //LED Error
-const int ledPinBlue = 7;                                           //LED Running
+const int ledPinBlue = 6;                                           //LED Running
 
 
 void setup() {
