@@ -92,7 +92,6 @@ void loop() {
   lcd.print(DHT.humidity);
   lcd.print("%");
 
-  // analogWrite(motor, 0);                                         //0 is the motor not moving, change up to 255 to switch the speed
   
   // Motor threshold test code mock up
   if(DHT.tempterature > 20)                                         //when the temperature is above 68 degress fahrenheit, motor will pick up speed
@@ -119,6 +118,19 @@ void loop() {
     digitalWrite(ledPinBlue, LOW);
     digitalWrite(ledPinYellow, LOW);
   }
+  
+
+  do                                   //ERROR                     //not sure what the condition should be for error state
+  {
+    digitalWrite(ledPinRed, HIGH);
+    digitalWrite(ledPinYellow, LOW);
+    digitalWrite(ledPinBlue, LOW);
+    digitalWrite(ledPinGreen, LOW);
+
+    analogWrite(motor, 0);                                         //0 is the motor not moving, change up to 255 to switch the speed
+
+    
+  }while(waterLevel < 40);
    
   
   
