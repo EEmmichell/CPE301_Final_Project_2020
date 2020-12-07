@@ -27,6 +27,7 @@
     -https://www.youtube.com/watch?v=G2WJvblxAGQ DC MOTOR SETUP
 
   ---------------------TODO LIST--------------------------------------------------------------
+  - get dht.h header file to work , might need to just add it into the library
   - be able to adjust the output vent
   - make sure the right leds turn on during each state
   - make a clock that tracks the time
