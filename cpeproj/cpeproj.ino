@@ -25,6 +25,12 @@
     -https://www.youtube.com/watch?v=n7WRi5U5lQk&t=101s SETTING UP ARDUINO WATER SENSOR
     - https://www.circuitbasics.com/how-to-set-up-the-dht11-humidity-sensor-on-an-arduino/ HUMIDITY SENSOR SETUP
     -https://www.youtube.com/watch?v=G2WJvblxAGQ DC MOTOR SETUP
+
+  ---------------------TODO LIST--------------------------------------------------------------
+  - be able to adjust the output vent
+  - make sure the right leds turn on during each state
+  - make a clock that tracks the time
+
 */
 
 int waterLevel = 0;                                                 //water level initialization
