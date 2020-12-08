@@ -33,16 +33,24 @@
 */
 
 int waterLevel = 0;                                                 //water level initialization
-int Spin = A5;                                                      //water level sensor pin
+int Spin = A0;                                                      //water level sensor pin
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);                              // setting up LCD display
 dht DHT;                                                            //setting up the LCD
-int dht11 = 7;                                                      //dht temperature and humidifier pin 7 
+int dht11 = 4;                                                      //dht temperature and humidifier Digital I/O pin 4 
 
-int motor = 3;                                                      //pwm analog pins
+int motor = 9;                                                      //pwm analog pins
 
 const int buttonPin = 2;                                            //push button pin
-int buttonState = 0;                                        
+int buttonState = 0;
+
+                                                                    // setting up LED pins through 74HC595 IC
+int latchPin = 6;                                                   // Latch pin defined at digital I/O pin 6 on Arduino
+int clockPin = 7;                                                   // clock pin defined at digital I/O pin 7 on Arduino
+int dataPin = 5;                                                   // data pin defined at digital I/O pin 5 on Arduino
+byte leds = 0;
+
+
 const int ledPinYellow = 10;                                        //LED Disabled
 const int ledPinGreen = 13;                                         //LED IDLE
 const int ledPinRed = 8;                                            //LED Error
