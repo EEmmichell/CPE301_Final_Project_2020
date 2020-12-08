@@ -43,7 +43,7 @@ int motor = 9;                                                      // enable mo
 int motorIN_1 = 3;                                                  // setup direction M1 direction 0/1 of motor at pwm pin 3
 int motorIN_2 = 2;                                                  // setup direction M1 direction 1/0 of motor at pwm pin 2
 
-const int buttonPin = 2;                                            //push button pin
+const int buttonPin = 9;                                            //push button pin to be read from digital I/O pin 9
 int buttonState = 0;
 
                                                                     // setting up LED pins through 74HC595 IC
@@ -61,7 +61,7 @@ const int ledPinBlue = 1;                                           //LED Runnin
 
 void setup() {
   Serial.begin(9600);                                               //setup normal delay
-
+  pinMode(buttonPin, INPUT)                                            // button will use Pulldown approach
  
   lcd.begin(16, 2);                                                 //setup the LCD display
 
@@ -170,7 +170,7 @@ void loop() {
 
 void updateShiftRegister()                                        // function utilized from the Elegoo LED tutorial (Lesson 24)
 {
- digital Write(latch Pin,  LOW);                                    // sends data to the 74HC595 IC to change the state of the LEDs
+ digital Write(latchPin,  LOW);                                    // sends data to the 74HC595 IC to change the state of the LEDs
  shiftOut(dataPin, clockPin, LSBFIRST, leds);
- digital Write(latch Pin, HIGH);
+ digital Write(latchPin, HIGH);
 }
