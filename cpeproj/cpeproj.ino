@@ -2,6 +2,8 @@
 //#include <Arduino.h>
 #include <dht.h>
 #include <LiquidCrystal.h>
+#include <TimeLib.h>
+#include <DS1307RTC.h>
 
 /* 
  1) Monitor the water levels in a reservoir and print an alert when the level is too low
@@ -58,6 +60,12 @@ const int ledPinGreen = 2;                                         //LED IDLE
 const int ledPinRed = 3;                                            //LED Error
 const int ledPinBlue = 1;                                           //LED Running
 
+const char *monthName[12] = {                                        // establish time elements for RTC module
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+
+tmElements_t tm;                                                     // variable used for time
 
 void setup() {
   Serial.begin(9600);                                               //setup normal delay
@@ -71,6 +79,36 @@ void setup() {
   digitalWrite(motorIN_1, LOW);                                     // motor should be off initially
   digitalWrite(motorIN_2, LOW);
  
+ 
+  bool parse=false;                                                 // setup time for the RTC module
+  bool config=false;
+
+  // get the date and time the compiler was run
+  if (getDate(__DATE__) && getTime(__TIME__)) {                    // record time
+    parse = true;
+    // and configure the RTC with this info
+    if (RTC.write(tm)) {
+      config = true;
+    }
+ 
+  delay(200);                                                     // get and 
+  if (parse && config) {
+    lcd.setCursor(0,0);
+    lcd.print("DS1307 configured Time=");
+    lcd.print(__TIME__);
+    lcd.print(", Date=");
+    lcd.println(__DATE__);
+  } else if (parse) {
+    lcd.println("DS1307 Communication Error :-{");
+    lcd.println("Please check your circuitry");
+  } else {
+    lcd.print("Could not parse info from the compiler, Time=\"");
+    lcd.print(__TIME__);
+    lcd.print("\", Date=\"");
+    lcd.print(__DATE__);
+    lcd.println("\"");
+  }
+   
   pinMode(latchPin,  OUTPUT);                                       // initializing latch pin on 74HC595 for LED setup
   pinMode(dataPin,  OUTPUT);                                        // initializing data pin on 74HC595  for LED setup
   pinMode(clockPin, OUTPUT);                                        // initializing clock pin on 74HC595 for LED setup
@@ -173,4 +211,32 @@ void updateShiftRegister()                                        // function ut
  digital Write(latchPin,  LOW);                                    // sends data to the 74HC595 IC to change the state of the LEDs
  shiftOut(dataPin, clockPin, LSBFIRST, leds);
  digital Write(latchPin, HIGH);
+}
+
+ bool getTime(const char *str)                                         // function utilized from DS1307RTC/examples/SetTime/SetTime.ino
+{
+  int Hour, Min, Sec;
+
+  if (sscanf(str, "%d:%d:%d", &Hour, &Min, &Sec) != 3) return false;
+  tm.Hour = Hour;
+  tm.Minute = Min;
+  tm.Second = Sec;
+  return true;
+}
+
+bool getDate(const char *str)                                         // function utilized from DS1307RTC/examples/SetTime/SetTime.ino
+{
+  char Month[12];
+  int Day, Year;
+  uint8_t monthIndex;
+
+  if (sscanf(str, "%s %d %d", Month, &Day, &Year) != 3) return false;
+  for (monthIndex = 0; monthIndex < 12; monthIndex++) {
+    if (strcmp(Month, monthName[monthIndex]) == 0) break;
+  }
+  if (monthIndex >= 12) return false;
+  tm.Day = Day;
+  tm.Month = monthIndex + 1;
+  tm.Year = CalendarYrToTm(Year);
+  return true;
 }
