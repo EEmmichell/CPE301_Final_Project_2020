@@ -37,7 +37,7 @@
 int waterLevel = 0;                                                 //water level initialization
 int Spin = A0;                                                      //water level sensor pin
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);                              // setting up LCD display
+LiquidCrystal lcd(8, 9, 10, 11, 12, 13);                              // setting up LCD display
 dht DHT;                                                            //setting up the LCD
 int dht11 = 4;                                                      //dht temperature and humidifier Digital I/O pin 4 
 
@@ -149,6 +149,8 @@ void loop() {
   lcd.print("Humidity: ");
   lcd.print(DHT.humidity);
   lcd.print("%");
+  delay(1000);
+  lcd.clear();
 
   
   // Motor threshold test code mock up
@@ -167,6 +169,10 @@ void loop() {
 
   if(buttonState == LOW)                      //DISABLED
   {
+    lcd.setCursor(0,1);                                               // display system state indicator on LCD
+    lcd.print("SWAMP COOLER: DISABLED");
+    delay(1000);
+    lcd.clear();
     bitSet(leds, ledPinYellow);                                       // Turn on Yellow LED for disabled until button is pressed
     bitClear(leds);                                                   // Turn off other LEDs
     updateShiftRegister();                                            // reflect the state of the LEDs
@@ -192,10 +198,16 @@ void loop() {
          
          lcd.setCursor(0,1);
          lcd.print("ERROR: WATER LEVEL IS LOW");
+         delay(1000);
+         lcd.clear();
   }
 
   if(DHT.temperature < 8)                   //RUNNING
   {
+     lcd.setCursor(0,1);                                             // display system indicator on LCD
+     lcd.print("SWAMP COOLER: RUNNING");
+     delay(1000);
+     lcd.clear();
      bitSet(leds, ledPinBlue);                                       // Turn on Blue LED for running
      bitClear(leds);                                                 // Turn off other LEDs
      updateShiftRegister();                                          // reflect the state of the LEDs
