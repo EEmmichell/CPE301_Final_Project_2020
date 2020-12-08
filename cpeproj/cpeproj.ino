@@ -39,7 +39,9 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);                              // setting u
 dht DHT;                                                            //setting up the LCD
 int dht11 = 4;                                                      //dht temperature and humidifier Digital I/O pin 4 
 
-int motor = 9;                                                      //pwm analog pins
+int motor = 9;                                                      // enable motor at pwm pin 9
+int motorIN_1 = 3;                                                  // setup direction M1 direction 0/1 of motor at pwm pin 3
+int motorIN_2 = 2;                                                  // setup direction M1 direction 1/0 of motor at pwm pin 2
 
 const int buttonPin = 2;                                            //push button pin
 int buttonState = 0;
@@ -51,40 +53,52 @@ int dataPin = 5;                                                   // data pin d
 byte leds = 0;
 
 
-const int ledPinYellow = 10;                                        //LED Disabled
-const int ledPinGreen = 13;                                         //LED IDLE
-const int ledPinRed = 8;                                            //LED Error
-const int ledPinBlue = 6;                                           //LED Running
+const int ledPinYellow = 4;                                        //LED Disabled
+const int ledPinGreen = 2;                                         //LED IDLE
+const int ledPinRed = 3;                                            //LED Error
+const int ledPinBlue = 1;                                           //LED Running
 
 
 void setup() {
+  Serial.begin(9600);                                               //setup normal delay
 
+ 
   lcd.begin(16, 2);                                                 //setup the LCD display
 
   pinMode(motor, OUTPUT);                                           //setup motor
-
-  pinMode(buttonPin, INPUT);                                        //LED setup
+  pinMode(motorIN_1, OUTPUT);                                       // initialize direction of motor for IN_1, and IN_2
+  pinMode(motorIN_2, OUTPUT);
+  digitalWrite(motorIN_1, LOW);                                     // motor should be off initially
+  digitalWrite(motorIN_2, LOW);
+ 
+  pinMode(latchPin,  OUTPUT);                                       // initializing latch pin on 74HC595 for LED setup
+  pinMode(dataPin,  OUTPUT);                                        // initializing data pin on 74HC595  for LED setup
+  pinMode(clockPin, OUTPUT);                                        // initializing clock pin on 74HC595 for LED setup
+  pinMode(buttonPin, INPUT);                                        // push button setup
   pinMode(ledPinYellow,OUTPUT);
   pinMode(ledPinGreen,OUTPUT);
   pinMode(ledPinRed,OUTPUT);
   pinMode(ledPinBlue,OUTPUT);
   
-  Serial.begin(9600);                                               //setup normal delay
-
 }
 
 void loop() {
 
+  leds = 0;                                                         // keep LEDs off until button is pressed
+  updateShiftRegister();                                            // reflect the state of the LEDs
+ 
   buttonState = digitalRead(buttonPin);                             //read push button for on and off
-
+ 
+ 
   waterLevel = analogRead(Spin);                                    //reading the pin into the variable
   Serial.println(waterLevel);                                       //printing the water level to console
 
-  if(waterLevel < 80)                                               //80 is arbitrary, will find better value after testing
+  /*if(waterLevel < 80)                                               //80 is arbitrary, will find better value after testing
   {
     lcd.setCursor(1,0);
     lcd.println("THE WATER LEVEL IS LOW");
   }
+  */
 
   //Setup for the LCD display and Humidity/Temperature
   int chk = DHT.read11(dht11);
@@ -102,51 +116,61 @@ void loop() {
   // Motor threshold test code mock up
   if(DHT.temperature > 20)                                         //when the temperature is above 68 degress fahrenheit, motor will pick up speed
   {
-    analogWrite(motor, 200);
+    digitalWrite(motor, 200);
+    digitalWrite(motorIN_1, HIGH);
+    digitalWrite(motorIN_2, LOW);
   }
   else                                                              //else it wil idle around 100
   {
-    analogWrite(motor, 100);
+    digitalWrite(motor, 100);
+    digitalWrite(motorIN_1, HIGH);
+    digitalWrite(motorIN_2, LOW);
   }
 
-  /*CODE MIGHT NEED TO BE COMBINED FOR FUNCTIONALITY LATER - STILL NEEDS WORK FOR IMPLEMENTATION*/
   if(buttonState == LOW)                      //DISABLED
   {
-    digitalWrite(ledPinYellow, HIGH);
-    digitalWrite(ledPinRed, LOW);
-    digitalWrite(ledPinBlue, LOW);
-    digitalWrite(ledPinGreen, LOW);
+    bitSet(leds, ledPinYellow);                                       // Turn on Yellow LED for disabled until button is pressed
+    bitClear(leds);                                                   // Turn off other LEDs
+    updateShiftRegister();                                            // reflect the state of the LEDs
+    digitalWrite(motorIN_1, LOW);                                     // turn off motor
+    digitalWrite(motorIN_2, LOW);
   }
   else                                        //IDLE
   {
-    digitalWrite(ledPinGreen, HIGH);
-    digitalWrite(ledPinRed, LOW);
-    digitalWrite(ledPinBlue, LOW);
-    digitalWrite(ledPinYellow, LOW);
+    bitSet(leds, ledPinGreen);                                        // Turn on Green LED for Idle until cooler starts running
+    bitClear(leds);                                                   // Turn off other LEDs
+    updateShiftRegister();                                            // reflect the state of the LEDs
   }
   
   if(waterLevel < 40)                         //ERROR                //not sure what the condition should be for error state
   {
-         digitalWrite(ledPinRed, HIGH);
-         digitalWrite(ledPinYellow, LOW);
-         digitalWrite(ledPinBlue, LOW);
-         digitalWrite(ledPinGreen, LOW);
+         bitSet(leds, ledPinRed);                                       // Turn on Red LED for error
+         bitClear(leds);                                                   // Turn off other LEDs
+         updateShiftRegister();                                            // reflect the state of the LEDs
 
-         analogWrite(motor, 0);                                         //0 is the motor not moving, change up to 255 to switch the speed
+         digitalWrite(motor, 0);                                         //0 is the motor not moving, change up to 255 to switch the speed
+         digitalWrite(motorIN_1, LOW);
+         digitalWrite(motorIN_2, LOW);
          
          lcd.setCursor(0,1);
-         lcd.print("IN THE ERROR STATE");
+         lcd.print("ERROR: WATER LEVEL IS LOW");
   }
 
   if(DHT.temperature < 8)                   //RUNNING
   {
-     digitalWrite(ledPinBlue, HIGH);
-     digitalWrite(ledPinYellow, LOW);
-     digitalWrite(ledPinRed, LOW);
-     digitalWrite(ledPinGreen, LOW);
+     bitSet(leds, ledPinBlue);                                       // Turn on Blue LED for running
+     bitClear(leds);                                                 // Turn off other LEDs
+     updateShiftRegister();                                          // reflect the state of the LEDs
   }
  
   
   delay(1000);                                                      //setup normal delay
   
+}
+
+void updateShiftRegister()                                        // function utilized from the Elegoo LED tutorial (Lesson 24)
+{
+ digital Write(latch Pin,  LOW);                                    // sends data to the 74HC595 IC to change the state of the LEDs
+ shiftOut(dataPin, clockPin, LSBFIRST, leds);
+ digital Write(latch Pin, HIGH);
 }
