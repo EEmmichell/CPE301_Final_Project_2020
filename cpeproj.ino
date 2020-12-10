@@ -41,9 +41,9 @@ LiquidCrystal lcd(8, 9, 10, 11, 12, 13);                            // setting u
 #define dht_analogPin A1                                            // directing the humidity/temperature sensor to
 dht DHT;                                                            // analog pin A1
 
-int motor = 51;                                                      // enable motor at pwm pin 9
-int motorIN_1 = 52;                                                  // setup direction M1 direction 0/1 of motor at pwm pin 3
-int motorIN_2 = 53;                                                  // setup direction M1 direction 1/0 of motor at pwm pin 2
+int motor = 4;                                                      // enable motor at pwm pin 1
+int motorIN_1 = 3;                                                  // setup direction M1 direction 0/1 of motor at pwm pin 3
+int motorIN_2 = 2;                                                  // setup direction M1 direction 1/0 of motor at pwm pin 2
 
 const int buttonPin = 50;                                            //push button pin to be read from digital I/O pin 9
 int buttonState = 0;
@@ -110,8 +110,6 @@ void writeReg()
 
 void setup() {
   // begin initial setup
-  
-  pinMode(buttonPin, INPUT);                                        // button will use Pulldown approach
  
   lcd.begin(16, 2);                                                 //setup the LCD display
   
@@ -141,7 +139,7 @@ void setup() {
     Serial.begin(9600);         //setup normal delay
     while (!Serial) ;
     // print the date and time to the LCD display
-    //lcd.setCursor(0,0);
+    lcd.setCursor(0,0);
     lcd.print("Time is: ");
     lcd.setCursor(0,1);
     lcd.print(__TIME__);
@@ -157,8 +155,12 @@ void setup() {
 
 void loop() {
   // begin program
-  //shiftRegister[1]=LOW;
-  writeReg();
+  
+    digitalWrite(latchPin, LOW);
+    digitalWrite(dataPin, shiftRegister[2]);
+    digitalWrite(latchPin, HIGH);
+  //digitalWrite(dataPin, HIGH);
+  //writeReg();
  
   //buttonState = digitalRead(buttonPin);                             //read push button for on and off
   buttonState = HIGH;
@@ -167,12 +169,17 @@ void loop() {
 
 
   //Setup for the LCD display and Humidity/Temperature
-  DHT.read11(dht_analogPin);
+  DHT.read11(A2);
   lcd.setCursor(0,0); 
   lcd.print("Temp: ");
   lcd.print(DHT.temperature);
-  lcd.print((char)223);      //character for degrees
+  lcd.print((char)223);                   //character for degrees
   lcd.print("C");
+  lcd.setCursor(0,1); 
+  lcd.print("Temp: ");
+  lcd.print(DHT.temperature*9/5 + 32 );    // conversion from Celsius to Farenheit
+  lcd.print((char)223);                   
+  lcd.print("F");
   delay(3000);
   lcd.clear();
   lcd.setCursor(0,0);
@@ -185,7 +192,7 @@ void loop() {
   
   
   // Motor threshold test code mock up
-  if(DHT.temperature > 20)                                         // when the temperature is above 68 degress fahrenheit,
+  if(DHT.temperature >= 20)                                         // when the temperature is above 20 degress Celsius,
   {                                                                // motor will pick up speed
     digitalWrite(motor, 200);
     digitalWrite(motorIN_1, HIGH);
@@ -193,7 +200,7 @@ void loop() {
   }
   else                                                             // else, motor will still run around 100 when idle
   {
-    digitalWrite(motor, 100);
+    digitalWrite(motor, 0);
     digitalWrite(motorIN_1, HIGH);
     digitalWrite(motorIN_2, LOW);
   }
@@ -208,17 +215,19 @@ void loop() {
     lcd.clear();
     //bitSet(leds, ledPinYellow);                                       // Turn on Yellow LED for disabled
     //updateShiftRegister();
-    //bitClear(leds, 0);                                                // Turn off other LEDs
-    //updateShiftRegister();                                            // reflect the state of the LEDs
-    digitalWrite(motorIN_1, LOW);                                     // turn off motor
+    //bitClear(leds, 0);                                              // Turn off other LEDs
+    //updateShiftRegister();                                          // reflect the state of the LEDs
+    digitalWrite(motor, 0);                                           // turn off motor
+    digitalWrite(motorIN_1, LOW);                                     
     digitalWrite(motorIN_2, LOW);
   }
-  else                                        //IDLE
-  {
+  //else                                        //IDLE
+  //{
     //bitSet(leds, ledPinGreen);                                        // Turn on Green LED for Idle until cooler starts running
     //bitClear(leds, 0);                                                // Turn off other LEDs
     //updateShiftRegister();                                            // reflect the state of the LEDs
-  }
+  //}
+
   
   if(waterLevel <= 100)                       //ERROR              
   {
@@ -237,6 +246,7 @@ void loop() {
          delay(3000);
          lcd.clear();
   }
+  
   else if (waterLevel > 100 && waterLevel <= 300){
          lcd.print("WATER: LOW");                             // indicate water level on LCD display
          delay(3000);
@@ -253,8 +263,9 @@ void loop() {
          lcd.clear();
   }
   //delay(3000);
+  
 
-  if(DHT.temperature > 8)                     //RUNNING
+  if(DHT.temperature > 30)                     //RUNNING
   {
      lcd.setCursor(0,0);                                             // display system indicator on LCD
      lcd.print("SWAMP COOLER");
