@@ -162,7 +162,7 @@ void loop() {
   //digitalWrite(dataPin, HIGH);
   //writeReg();
  
-  //buttonState = digitalRead(buttonPin);                             //read push button for on and off
+  buttonState = digitalRead(buttonPin);                             //read push button for on and off
   buttonState = HIGH;
  
   waterLevel = analogRead(Spin);                                    //reading the water sensor analog pin                                     
